@@ -7,7 +7,6 @@ st.set_page_config(
     page_icon="📈",
     layout="wide"
 )
-
 openai.api_key = st.secrets['API_KEY_OPENAI']
 
 def create_prompt(transcript):
@@ -70,42 +69,53 @@ if topic:
     with st.expander("ℹ️ - Topic Explanation", expanded=True):
         tpc_prmpt = f"""Briefly explain what this code {query} do that related only to competitive programming and nothing else. 
         Answer properly that any beginner in competitive programming would understand explanation. 
-        Only provide a compliant and correct JSON response following this format without deviation."""
+        """
         
-        json_prompt = """{"summary": "brief explanation"}, "steps": ["steps of topic"]}"""
+        json_prompt = """Only provide a compliant and correct JSON response following this format without deviation like this {"summary": "brief explanation"}, "steps": ["steps of topic"]}"""
 
-        tpc_ans = json.loads(openai_create(tpc_prmpt + json_prompt).replace('”', '"'))
+        tpc_ans = openai_create(tpc_prmpt)
+        
 
-        summ = tpc_ans['summary']
-        steps = tpc_ans['steps']
+        try:
+            jtpc_ans = json.loads(openai_create(tpc_prmpt + json_prompt).replace('”', '"'))
+            summ = jtpc_ans['summary']
+            steps = jtpc_ans['steps']
 
-        # st.write(f'{tpc_ans}'
-        st.markdown("<h3 style='text-align: left;'> Brief Summary</h3>", unsafe_allow_html=True)
-        st.info(summ)
+            # st.write(f'{tpc_ans}'
+            st.markdown("<h3 style='text-align: left;'> Brief Summary</h3>", unsafe_allow_html=True)
+            st.info(summ)
 
-        st.markdown("<h3 style='text-align: left;'> Steps</h3>", unsafe_allow_html=True)
-        for step in steps:
-            st.success(step)
+            st.markdown("<h3 style='text-align: left;'> Steps</h3>", unsafe_allow_html=True)
+            for step in steps:
+                st.success(step)
+        except:
+            st.info(tpc_ans)
+
 
 if code:
     with st.expander("ℹ️ - Code Explanation & Assist", expanded=True):
         tpc_prmpt = f"""Briefly explain what this code {query} do, and what explain what is wrong with it and it should that related only to competitive programming and nothing else. 
-                    Answer properly that any beginner in competitive would understand explanation. 
-                    Only provide a compliant and correct JSON response following this format without deviation."""
-            
-        json_prompt = """{"explanation": "brief explanation", "wrong": "what is wrong"}"""
+        Answer properly that any beginner in competitive programming would understand explanation. 
+        """
+        
+        json_prompt = """Only provide a compliant and correct JSON response following this format without deviation like this {"explanation": "brief explanation", "wrong": "what is wrong"}"""
 
-        tpc_ans = json.loads(openai_create(tpc_prmpt + json_prompt).replace('”', '"'))
+        tpc_ans = openai_create(tpc_prmpt)
+        
+        try:
+            jtpc_ans = json.loads(openai_create(tpc_prmpt + json_prompt).replace('”', '"'))
 
-        exp = tpc_ans['explanation']
-        wr = tpc_ans['wrong']
+            exp = jtpc_ans['explanation']
+            wr = jtpc_ans['wrong']
 
-            # st.write(f'{tpc_ans}'
-        st.markdown("<h3 style='text-align: left;'> Brief Explanation</h3>", unsafe_allow_html=True)
-        st.info(exp)
+                # st.write(f'{tpc_ans}'
+            st.markdown("<h3 style='text-align: left;'> Brief Explanation</h3>", unsafe_allow_html=True)
+            st.info(exp)
 
-        st.markdown("<h3 style='text-align: left;'> What is wrong?</h3>", unsafe_allow_html=True)
-        st.success(wr)
+            st.markdown("<h3 style='text-align: left;'> What is wrong?</h3>", unsafe_allow_html=True)
+            st.success(wr)
+        except:
+            st.info(tpc_ans)
 
 if prob:
     pass
