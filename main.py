@@ -72,7 +72,7 @@ if topic:
         Answer properly that any beginner in competitive programming would understand explanation. 
         Only provide a compliant and correct JSON response following this format without deviation."""
         
-        json_prompt = """{"summary": "brief explanation"}, "steps": ["steps of topic"]"""
+        json_prompt = """{"summary": "brief explanation"}, "steps": ["steps of topic"]}"""
 
         tpc_ans = json.loads(openai_create(tpc_prmpt + json_prompt).replace('”', '"'))
 
